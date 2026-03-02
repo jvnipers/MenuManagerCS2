@@ -44,12 +44,12 @@ namespace MenuManager
 
         public static MenuType GetCurrentPlayerMenu(CCSPlayerController player)
         {         
-            var res = settings.GetPlayerSettingsValue(player, "menutype", DefaultMenu);
+            var res = settings?.GetPlayerSettingsValue(player, "menutype", DefaultMenu) ?? DefaultMenu;
             try
             {
                 return (MenuType)Enum.Parse(typeof(MenuType), res);
             }
-            catch(Exception _)
+            catch(Exception)
             {
                 Control.GetPlugin().Logger.LogWarning($"Cannot cast MenuType for player {player.PlayerName} [{player.Slot}] (got value \"{res}\"). Using default {DefaultMenu}...");
                 return (MenuType)Enum.Parse(typeof(MenuType), DefaultMenu);
@@ -59,7 +59,7 @@ namespace MenuManager
         public static void SelectPlayerMenu(CCSPlayerController player, MenuType type)
         {
             var name = Enum.GetName(type.GetType(), type);
-            settings.SetPlayerSettingsValue(player, "menutype", name);
+            settings?.SetPlayerSettingsValue(player, "menutype", name!);
 
             player.PrintToChat($"{Control.GetPlugin().Localizer["menumanager.selected_type"]} {Misc.GetMenuTypeName(type)}");
         }

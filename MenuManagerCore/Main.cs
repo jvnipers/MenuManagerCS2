@@ -34,7 +34,7 @@ public class MenuManagerCore : BasePlugin, IPluginConfig<PluginConfig>
     public override string ModuleVersion => "1.4.1";
     public override string ModuleAuthor => "Nick Fox";
     public override string ModuleDescription => "All menus interacts in one core";
-    public PluginConfig Config { get; set; }
+    public PluginConfig Config { get; set; } = null!;
     public void OnConfigParsed(PluginConfig config)
     {
         Config = config;
@@ -61,7 +61,7 @@ public class MenuManagerCore : BasePlugin, IPluginConfig<PluginConfig>
         RegisterEventHandler<EventPlayerDisconnect>((@event, info) =>
         {
             if (Config.UseMetamodMenu)
-                MenusMM.ClearCallbackInfo(@event.Userid.Slot);
+                MenusMM.ClearCallbackInfo(@event.Userid!.Slot);
             return HookResult.Continue;
         }, HookMode.Pre);
             if (hotReload) MenusMM.Init();
@@ -74,10 +74,17 @@ public class MenuManagerCore : BasePlugin, IPluginConfig<PluginConfig>
 
     public override void OnAllPluginsLoaded(bool hotReload)
     {
-        _settings = _settingsCapability.Get();
+        try
+        {
+            _settings = _settingsCapability.Get();
+        }
+        catch (Exception)
+        {
+            _settings = null;
+        }
         if (_settings == null)
             Console.WriteLine("PlayerSettings core not found...");
-        Misc.SetSettingApi(_settings);        
+        Misc.SetSettingApi(_settings!);        
     }
 
     public override void Unload(bool hotReload){
@@ -89,7 +96,7 @@ public class MenuManagerCore : BasePlugin, IPluginConfig<PluginConfig>
     {
         if (player != null)
         {
-            var menu = _api.GetMenu(Localizer["menumanager.select_type"]);
+            var menu = _api!.GetMenu(Localizer["menumanager.select_type"]);
             menu.PostSelectAction = PostSelectAction.Close;
             menu.AddMenuOption(Localizer["menumanager.console"], (player, option) => { Misc.SelectPlayerMenu(player, MenuType.ConsoleMenu); });
             menu.AddMenuOption(Localizer["menumanager.chat"], (player, option) => { Misc.SelectPlayerMenu(player, MenuType.ChatMenu); });

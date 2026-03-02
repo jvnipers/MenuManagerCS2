@@ -14,7 +14,7 @@ namespace MenuManager;
 internal static class Control
 {
     public static List<PlayerInfo> menus = new List<PlayerInfo>();
-    private static MenuManagerCore hPlugin;
+    private static MenuManagerCore hPlugin = null!;
 
     public static void AddMenu(CCSPlayerController player, ButtonMenu inst)
     {
@@ -77,7 +77,7 @@ internal static class Control
 
                 buttons = player.Buttons;
                 if(!hPlugin.Config.MoveWhileOpenMenu)
-                    player.PlayerPawn.Value.VelocityModifier = 0.0f;
+                    player.PlayerPawn.Value!.VelocityModifier = 0.0f;
                 
                 if (!menu.IsEqualButtons(buttons.ToString()))
                 {
@@ -99,7 +99,7 @@ internal static class Control
                     {                            
                         menu.Close(true);
                         if (!hPlugin.Config.MoveWhileOpenMenu)
-                            player.PlayerPawn.Value.VelocityModifier = menu.GetMod();
+                            player.PlayerPawn.Value!.VelocityModifier = menu.GetMod();
                         menus.RemoveAt(i);
                         i--;
                         continue;
@@ -130,7 +130,7 @@ internal static class Control
         MenusMM.ClosePlayerMenu(player.Slot);
     }
  
-    internal static bool HasOpenedMenu(CCSPlayerController player, PlayerInfo info = null)
+    internal static bool HasOpenedMenu(CCSPlayerController player, PlayerInfo? info = null)
     {     
         
         foreach (var menu in menus)
